@@ -5,17 +5,22 @@ import javax.sql.DataSource;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 @Getter
 @Setter
 public class CustomDataSource implements DataSource {
     Logger logger = Logger.getLogger(Class.class.getName());
+    private final String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+    private final String appConfigPath = rootPath + "app.properties";
     private static volatile CustomDataSource instance;
     private final String driver;
     private final String url;
@@ -30,6 +35,7 @@ public class CustomDataSource implements DataSource {
     }
 
     public static CustomDataSource getInstance(String driver, String url, String password, String name) {
+
         if(instance==null){
             synchronized (CustomDataSource.class){
                 if(instance==null){
@@ -42,8 +48,17 @@ public class CustomDataSource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
+        Properties appProps = new Properties();
+        try {
+            appProps.load(new FileInputStream(appConfigPath));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Connection connection = null;
         try{
+            String driver = appProps.getProperty("postgres.driver");
+            String url = appProps.getProperty("postgres.url");
+            String password = appProps.getProperty("postgres.password");
             Class.forName(driver);
             connection = DriverManager.getConnection(url,name,password);
         }catch (ClassNotFoundException e){
