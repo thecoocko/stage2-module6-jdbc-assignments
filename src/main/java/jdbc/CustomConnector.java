@@ -1,8 +1,5 @@
 package jdbc;
 
-import lombok.Value;
-import org.postgresql.Driver;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -10,10 +7,7 @@ import java.util.logging.Logger;
 
 public class CustomConnector {
     Logger logger = Logger.getLogger(Class.class.getName());
-    //postgres.driver=org.postgresql.Driver
-    //postgres.url="jdbc:postgresql://localhost:5432/postgres"
-    //postgres.password=admin
-    //postgres.name=postgres
+
     public Connection getConnection(String url) {
         Connection connection = null;
         try {
