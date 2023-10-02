@@ -46,9 +46,9 @@ public class SimpleJDBCRepository {
 
             ps = connection.prepareStatement(createUserSQL,PreparedStatement.RETURN_GENERATED_KEYS);
 
-            ps.setString(1,"Nikita");
-            ps.setString(2,"Litvinkov");
-            ps.setInt(3, 21);
+            ps.setString(1,firstname);
+            ps.setString(2,lastname);
+            ps.setInt(3, age);
 
             ps.execute();
 
