@@ -150,39 +150,41 @@ public class SimpleJDBCRepository {
 
     }
 
-    public User updateUser() {
-        try(Connection connection = CustomDataSource.getConnection()){
-            preparedStatement = connection.prepareStatement(updateUserSQL);
-            preparedStatement.setString(1, user.getFirstName());
-            preparedStatement.setString(2, user.getLastName());
-            preparedStatement.setInt(3, user.getAge());
-            preparedStatement.setLong(4, user.getId());
-            log.info(preparedStatement.toString());
+    public User updateUser(User user) {
+        try{
+            connection = CustomDataSource.getInstance(driver,url,password,name).getConnection();
+            ps = connection.prepareStatement(updateUserSQL);
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setInt(3, user.getAge());
+            ps.setLong(4, user.getId());
+            log.info(ps.toString());
 
             if (preparedStatement.executeUpdate() > 0) {
-                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                ResultSet generatedKeys = ps.getGeneratedKeys();
                 if(generatedKeys.next()) {
                     return findUserById(generatedKeys.getLong(1));
                 }
             } else { throw new SQLException("Unable to create user."); }
 
-        } catch (SQLException se) { log.info(se.getMessage()); }
+        } catch (SQLException se) { logger.info(se.getMessage()); }
         return null;
 
     }
 
     private void deleteUser(Long userId) {
-        try (Connection connection = CustomDataSource.getConnection()) {
-            preparedStatement = connection.prepareStatement(deleteUser);
-            preparedStatement.setLong(1, userId);
-            log.info(preparedStatement.toString());
+        try  {
+            connection = CustomDataSource.getInstance(driver,url,password,name).getConnection();
+            ps = connection.prepareStatement(deleteUser);
+            ps.setLong(1, userId);
+            logger.info(preparedStatement.toString());
 
-            if (preparedStatement.executeUpdate() == 0){
+            if (ps.executeUpdate() == 0){
                 throw new SQLException("UserId " + userId + " not found or an error occurred. No record was deleted.");
             }
 
         } catch (SQLException se) {
-            log.info(se.getMessage());
+            logger.info(se.getMessage());
         }
     }
 }
