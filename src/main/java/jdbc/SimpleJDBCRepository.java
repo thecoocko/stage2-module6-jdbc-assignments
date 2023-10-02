@@ -40,15 +40,16 @@ public class SimpleJDBCRepository {
     private final String name = appProp.getProperty("postgres.name");
 
 
-    public Long createUser(String firstname, String lastname,int age) {
+    public Long createUser(User user) {
         try{
             connection = CustomDataSource.getInstance(driver,url,name,password).getConnection();
 
             ps = connection.prepareStatement(createUserSQL,PreparedStatement.RETURN_GENERATED_KEYS);
 
-            ps.setString(1,firstname);
-            ps.setString(2,lastname);
-            ps.setInt(3, age);
+            ps.setString(1,user.getId());
+            ps.setString(2,user.getFirstName());
+            ps.setString(3,user.getLastName());
+            ps.setInt(4, user.getAge());
 
             ps.execute();
 
