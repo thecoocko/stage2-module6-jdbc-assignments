@@ -48,7 +48,7 @@ public class CustomDataSource implements DataSource {
             String password = appProps.getProperty("postgres.password");
             String name = appProps.getProperty("postgres.name");
 
-            return new CustomDataSource(driver, url, password, name)
+            return new CustomDataSource(driver, url, password, name);
         }
         return instance;
     }
