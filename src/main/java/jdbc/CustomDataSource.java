@@ -34,7 +34,7 @@ public class CustomDataSource implements DataSource {
         this.name = name;
     }
 
-    public static CustomDataSource getInstance(String driver, String url, String password, String name) {
+    public static CustomDataSource getInstance() {
 
         if(instance==null){
             Properties properties = new Properties();

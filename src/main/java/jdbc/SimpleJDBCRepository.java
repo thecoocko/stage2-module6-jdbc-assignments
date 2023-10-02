@@ -30,19 +30,11 @@ public class SimpleJDBCRepository {
     private static final String findAllUserSQL = "SELECT * FROM myusers";
 
     Logger logger = Logger.getLogger(Class.class.getName());
-    private final String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
 
-    private final Properties appProp = new Properties();
-
-    private final String appConfigPath = rootPath + "app.properties";
-    private final String driver = appProp.getProperty("postgres.driver");
-    private final String url = appProp.getProperty("postgres.url");
-    private final String password = appProp.getProperty("postgres.password");
-    private final String name = appProp.getProperty("postgres.name");
 
     public Long createUser(User user) {
         try{
-            connection = CustomDataSource.getInstance(driver,url,name,password);
+            connection = CustomDataSource.getInstance();
 
             ps = connection.prepareStatement(createUserSQL,PreparedStatement.RETURN_GENERATED_KEYS);
 
@@ -76,7 +68,7 @@ public class SimpleJDBCRepository {
 
     public User findUserById(Long userId) {
         try {
-            connection = CustomDataSource.getInstance(driver,url,name,password);
+            connection = CustomDataSource.getInstance();
             ps = connection.prepareStatement(findUserByIdSQL);
 
             ps.setLong(1, userId);
@@ -101,7 +93,7 @@ public class SimpleJDBCRepository {
     public User findUserByName(String userName) {
 
         try {
-            connection = CustomDataSource.getInstance(driver,url,name,password);
+            connection = CustomDataSource.getInstance();
             ps = connection.prepareStatement(findUserByNameSQL);
 
             ps.setString(1, userName);
@@ -127,7 +119,7 @@ public class SimpleJDBCRepository {
     public List<User> findAllUser() {
 
         try {
-            connection = CustomDataSource.getInstance(driver,url,name,password);
+            connection = CustomDataSource.getInstance();
             ps = connection.prepareStatement(findAllUserSQL);
 
             ResultSet rs = ps.executeQuery();
@@ -152,7 +144,7 @@ public class SimpleJDBCRepository {
 
     public User updateUser(User user) {
         try{
-            connection = CustomDataSource.getInstance(driver,url,name,password);
+            connection = CustomDataSource.getInstance();
             ps = connection.prepareStatement(updateUserSQL);
             ps.setString(1, user.getFirstName());
             ps.setString(2, user.getLastName());
@@ -174,7 +166,7 @@ public class SimpleJDBCRepository {
 
     private void deleteUser(Long userId) {
         try  {
-            connection = CustomDataSource.getInstance(driver,url,name,password);
+            connection = CustomDataSource.getInstance();
             ps = connection.prepareStatement(deleteUser);
             ps.setLong(1, userId);
             logger.info(ps.toString());
