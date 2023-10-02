@@ -158,9 +158,9 @@ public class SimpleJDBCRepository {
             ps.setString(2, user.getLastName());
             ps.setInt(3, user.getAge());
             ps.setLong(4, user.getId());
-            log.info(ps.toString());
+            logger.info(ps.toString());
 
-            if (preparedStatement.executeUpdate() > 0) {
+            if (ps.executeUpdate() > 0) {
                 ResultSet generatedKeys = ps.getGeneratedKeys();
                 if(generatedKeys.next()) {
                     return findUserById(generatedKeys.getLong(1));
@@ -177,7 +177,7 @@ public class SimpleJDBCRepository {
             connection = CustomDataSource.getInstance(driver,url,password,name).getConnection();
             ps = connection.prepareStatement(deleteUser);
             ps.setLong(1, userId);
-            logger.info(preparedStatement.toString());
+            logger.info(ps.toString());
 
             if (ps.executeUpdate() == 0){
                 throw new SQLException("UserId " + userId + " not found or an error occurred. No record was deleted.");
