@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -38,7 +39,6 @@ public class SimpleJDBCRepository {
     private final String url = appProp.getProperty("postgres.url");
     private final String password = appProp.getProperty("postgres.password");
     private final String name = appProp.getProperty("postgres.name");
-
 
     public Long createUser(User user) {
         try{
@@ -99,19 +99,90 @@ public class SimpleJDBCRepository {
     }
 
     public User findUserByName(String userName) {
+
+        try {
+            connection = CustomDataSource.getInstance(driver,url,password,name).getConnection();
+            ps = connection.prepareStatement(findUserByNameSQL);
+
+            ps.setString(1, userName);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                User resultUser = new User();
+                resultUser.setAge(rs.getInt("age"));
+                resultUser.setId(rs.getLong("id"));
+                resultUser.setFirstName(rs.getString("firstname"));
+                resultUser.setLastName(rs.getString("lastname"));
+
+                return resultUser;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         return null;
     }
 
+
     public List<User> findAllUser() {
-        return null;
+
+        try {
+            connection = CustomDataSource.getInstance(driver,url,password,name).getConnection();
+            ps = connection.prepareStatement(findAllUserSQL);
+
+            ResultSet rs = ps.executeQuery();
+            List<User> users = new ArrayList<>();
+
+
+            while(rs.next()){
+                User resultUser = new User();
+                resultUser.setAge(rs.getInt("age"));
+                resultUser.setId(rs.getLong("id"));
+                resultUser.setFirstName(rs.getString("firstname"));
+                resultUser.setLastName(rs.getString("lastname"));
+                users.add(resultUser);
+            }
+            return users;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public User updateUser() {
+        try(Connection connection = dataSource.getConnection()){
+            preparedStatement = connection.prepareStatement(UPDATE_USER_SQL, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, user.getFirstName());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setInt(3, user.getAge());
+            preparedStatement.setLong(4, user.getId());
+            log.info(preparedStatement.toString());
+
+            if (preparedStatement.executeUpdate() > 0) {
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if(generatedKeys.next()) {
+                    return findUserById(generatedKeys.getLong(1));
+                }
+            } else { throw new SQLException("Unable to create user."); }
+
+        } catch (SQLException se) { log.info(se.getMessage()); }
         return null;
 
     }
 
     private void deleteUser(Long userId) {
+        try (Connection connection = dataSource.getConnection()) {
+            preparedStatement = connection.prepareStatement(DELETE_USER, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setLong(1, userId);
+            log.info(preparedStatement.toString());
 
+            if (preparedStatement.executeUpdate() == 0){
+                throw new SQLException("UserId " + userId + " not found or an error occurred. No record was deleted.");
+            }
+
+        } catch (SQLException se) {
+            log.info(se.getMessage());
+        }
     }
 }
