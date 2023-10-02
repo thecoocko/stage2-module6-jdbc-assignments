@@ -55,25 +55,7 @@ public class CustomDataSource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        Properties appProps = new Properties();
-
-        try {
-            appProps.load(new FileInputStream(appConfigPath));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Connection connection = null;
-        try{
-            String driver = appProps.getProperty("postgres.driver");
-            String url = appProps.getProperty("postgres.url");
-            String password = appProps.getProperty("postgres.password");
-            String name = appProps.getProperty("postgres.name");
-            Class.forName(driver);
-            connection = DriverManager.getConnection(url,name,password);
-        }catch (ClassNotFoundException e){
-            getParentLogger().severe(e.getMessage());
-        }
-        return connection;
+        return null;
     }
 
 
