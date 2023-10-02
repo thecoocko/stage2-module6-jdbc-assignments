@@ -43,10 +43,10 @@ public class CustomDataSource implements DataSource {
             }catch (IOException e){
                 throw  new RuntimeException(e);
             }
-            String driver = appProps.getProperty("postgres.driver");
-            String url = appProps.getProperty("postgres.url");
-            String password = appProps.getProperty("postgres.password");
-            String name = appProps.getProperty("postgres.name");
+            String driver = properties.getProperty("postgres.driver");
+            String url = properties.getProperty("postgres.url");
+            String password = properties.getProperty("postgres.password");
+            String name = properties.getProperty("postgres.name");
 
             return new CustomDataSource(driver, url, password, name);
         }
@@ -55,7 +55,7 @@ public class CustomDataSource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        return null;
+        return DriverManager.getConnection(url, name, password);
     }
 
 
