@@ -48,7 +48,7 @@ public class SimpleJDBCRepository {
 
             ps.setString(1,"Nikita");
             ps.setString(2,"Litvinkov");
-            ps.setString(3,"21");
+            ps.setInt(3, 21);
 
             ps.execute();
 
@@ -72,21 +72,26 @@ public class SimpleJDBCRepository {
     }
 
     public static void main(String[] args) {
-        new SimpleJDBCRepository().createUser();
+//        new SimpleJDBCRepository().createUser();
+        System.out.println(new SimpleJDBCRepository().findUserById((long)1));
+//        new SimpleJDBCRepository().createUser();
     }
 
     public User findUserById(Long userId) {
         try {
             connection = CustomDataSource.getInstance(driver,url,password,name).getConnection();
             ps = connection.prepareStatement(findUserByIdSQL);
+
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
-            User resultUser = new User();
-            resultUser.setAge((int) rs.getLong("age"));
-            resultUser.setId(rs.getLong("id"));
-            resultUser.setFirstName(String.valueOf(rs.getLong("firstname")));
-            resultUser.setLastName(String.valueOf(rs.getLong("lastname")));
+
             if (rs.next()) {
+                User resultUser = new User();
+                resultUser.setAge(rs.getInt("age"));
+                resultUser.setId(rs.getLong("id"));
+                resultUser.setFirstName(rs.getString("firstname"));
+                resultUser.setLastName(rs.getString("lastname"));
+
                 return resultUser;
             }
         } catch (SQLException e) {
