@@ -40,7 +40,7 @@ public class SimpleJDBCRepository {
     private final String name = appProp.getProperty("postgres.name");
 
 
-    public Long createUser() {
+    public Long createUser(String firstname, String lastname,int age) {
         try{
             connection = CustomDataSource.getInstance(driver,url,name,password).getConnection();
 
@@ -71,11 +71,7 @@ public class SimpleJDBCRepository {
         return null;
     }
 
-    public static void main(String[] args) {
-//        new SimpleJDBCRepository().createUser();
-        System.out.println(new SimpleJDBCRepository().findUserById((long)1));
-//        new SimpleJDBCRepository().createUser();
-    }
+
 
     public User findUserById(Long userId) {
         try {
