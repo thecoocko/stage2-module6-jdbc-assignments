@@ -151,8 +151,8 @@ public class SimpleJDBCRepository {
     }
 
     public User updateUser() {
-        try(Connection connection = dataSource.getConnection()){
-            preparedStatement = connection.prepareStatement(UPDATE_USER_SQL, Statement.RETURN_GENERATED_KEYS);
+        try(Connection connection = CustomDataSource.getConnection()){
+            preparedStatement = connection.prepareStatement(updateUserSQL);
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setInt(3, user.getAge());
@@ -172,8 +172,8 @@ public class SimpleJDBCRepository {
     }
 
     private void deleteUser(Long userId) {
-        try (Connection connection = dataSource.getConnection()) {
-            preparedStatement = connection.prepareStatement(DELETE_USER, Statement.RETURN_GENERATED_KEYS);
+        try (Connection connection = CustomDataSource.getConnection()) {
+            preparedStatement = connection.prepareStatement(deleteUser);
             preparedStatement.setLong(1, userId);
             log.info(preparedStatement.toString());
 
